@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../../models/User');
+const gravatar = require('gravatar');
+const bcrypt = require('bcryptjs');
 
 // This is the API call, so we dont include the route specified in server.js
 // so this call will send us to whatever app.use that corresponds to this users file
@@ -10,5 +13,33 @@ const router = express.Router();
 // @access  Private
 router.get('/test', (req, res) => res.json({msg: "users works"}));
 
+
+// @route   POST api/users/test
+// @desc    Registers a user
+// @access  Public
+router.post("/register", async (req, res) => {
+    let user = await User.findOne({email: req.body.email}); // init new user by email
+    if (user) { // if it exist throw an error
+        return res.status(400).json({email: "Email already exists"})
+    } 
+    else { // make our avatar
+        const avatar = gravatar.url(req.body.email, {
+            s: '200',
+            r: 'pg',
+            d: 'mm'
+        })
+        const newUser = new User({ // create new user in our database
+            name: req.body.name,
+            email: req.body.email,
+            avatar: avatar,
+            password: req.body.password
+        });
+ 
+        let salt = await bcrypt.genSalt(10); // generate the salt 
+        newUser.password = await bcrypt.hash(newUser.password, salt); // set our passsword to the hashed and salted password 
+        let user = await newUser.save(); // save this user into our db
+        res.json(user); // output the json
+    }
+});
 
 module.exports = router;

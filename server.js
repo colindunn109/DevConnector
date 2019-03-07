@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 //Defining Routes where we can house our endpoints (api calls)
 const users = require('./routes/api/users');
@@ -7,6 +8,10 @@ const profile = require('./routes/api/profile');
 const posts = require('./routes/api/posts');
 
 const app = express();
+
+// Bodyparser middle ware
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 //DB CONFIG
 const db = require('./config/keys').mongoURI;
