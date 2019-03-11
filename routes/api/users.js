@@ -9,6 +9,7 @@ const passport = require('passport');
 
 //Load input validation
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 
 
 // @route   GET api/users/test
@@ -56,11 +57,19 @@ router.post("/register", async (req, res) => {
 // @desc    Login User / returnning jwt
 // @access  Public
 router.post('/login', async (req,res) => {
+
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+
     const password = req.body.password;
 
     let user = await User.findOne({email: req.body.email});
     if(!user){
-        return res.status(404).json({email: "user email not found"});
+        errors.email = "User email not found";
+        return res.status(404).json(errors);
     }
     let isMatch = await bcrypt.compare(password, user.password)
     if(isMatch){
@@ -76,7 +85,8 @@ router.post('/login', async (req,res) => {
         });
     }
     else {
-        return res.status(400).json({password: "incorrect password"});
+        errors.password = "Password incorrect";
+        return res.status(400).json(errors);
     }
 })
 
