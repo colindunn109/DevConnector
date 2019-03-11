@@ -7,9 +7,9 @@ const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
 const passport = require('passport');
 
-// This is the API call, so we dont include the route specified in server.js
-// so this call will send us to whatever app.use that corresponds to this users file
-// meaning /api/users/{API_CALL}
+//Load input validation
+const validateRegisterInput = require('../../validation/register');
+
 
 // @route   GET api/users/test
 // @desc    Tests users route
@@ -21,6 +21,13 @@ router.get('/test', (req, res) => res.json({msg: "users works"}));
 // @desc    Registers a user
 // @access  Public
 router.post("/register", async (req, res) => {
+
+    const { errors, isValid } = validateRegisterInput(req.body);
+
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+
     let user = await User.findOne({email: req.body.email}); // init new user by email
     if (user) { // if it exist throw an error
         return res.status(400).json({email: "Email already exists"})
