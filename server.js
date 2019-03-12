@@ -20,7 +20,7 @@ const db = require('./config/keys').mongoURI;
 
 //Connect to Mongo (calls a promise)
 mongoose
-    .connect(db) //Pending (kinda)
+    .connect(db) //Pending
     .then(() => console.log('MongoDB connected!')) //Success
     .catch(err => console.log(err)); //rejected
 
@@ -29,8 +29,6 @@ app.use(passport.initialize());
 
 // Passport Config
 require('./config/passport')(passport);
-
-app.get('/', (req, res) => res.send('hello!!!'));
 
 // USE ROUTES
 app.use('/api/users', users);

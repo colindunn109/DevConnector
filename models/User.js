@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
-//Create Schema
+// Create Schema
 // This is basically defining the model for our db
 const UserSchema = new Schema({
     name: {
