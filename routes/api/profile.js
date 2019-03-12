@@ -11,6 +11,9 @@ const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
 
+
+// ---------------GET ENDPOINTS-----------------------
+
 // @route   GET api/profile/test
 // @desc    Tests profile route
 // @access  Public
@@ -93,6 +96,12 @@ router.get('/user/:user_id' , async (req, res) => {
     .catch(err => res.status(404).json(err));
 });
 
+
+
+
+
+// ---------------POST ENDPOINTS-----------------------
+
 // @route   POST api/profile
 // @desc    create or edit user profile
 // @access  Private
@@ -142,7 +151,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req,res) => 
                     res.status(400).json(errors);
                 }
 
-                new Profile(profileFields).save().then(profile => { res.json(profile )})
+                new Profile(profileFields).save().then(profile => { res.json(profile)})
             })
         }
     });
@@ -210,6 +219,11 @@ router.post('/education', passport.authenticate('jwt', { session: false }), (req
     })
     .catch(err => res.status(404).json(err));
 });
+
+
+
+
+// ---------------DELETE ENDPOINTS-----------------------
 
 
 // @route   DELETE api/profile/experience/:exp_id
