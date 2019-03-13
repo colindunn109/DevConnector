@@ -231,11 +231,8 @@ router.post('/education', passport.authenticate('jwt', { session: false }), (req
 // @access  Private
 router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: false }), (req, res) => {
 
-    Profile.findOne({ user: req.user.id })
-    .then(profile => {
-        const removeIndex = profile.experience
-        .map(item => item.id)
-        .indexOf(req.params.exp_id);
+    Profile.findOne({ user: req.user.id }).then(profile => {
+        const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
 
         profile.experience.splice(removeIndex, 1);
         profile.save().then(profile => res.json(profile));
@@ -248,11 +245,8 @@ router.delete('/experience/:exp_id', passport.authenticate('jwt', { session: fal
 // @access  Private
 router.delete('/education/:edu_id', passport.authenticate('jwt', { session: false }), (req, res) => {
 
-    Profile.findOne({ user: req.user.id })
-    .then(profile => {
-        const removeIndex = profile.education
-        .map(item => item.id)
-        .indexOf(req.params.edu_id);
+    Profile.findOne({ user: req.user.id }).then(profile => {
+        const removeIndex = profile.education.map(item => item.id).indexOf(req.params.edu_id);
 
         profile.education.splice(removeIndex, 1);
         profile.save().then(profile => res.json(profile));
