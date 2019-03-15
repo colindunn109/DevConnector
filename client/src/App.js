@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from './utils/setAuthToken';
 import { setCurrentUser } from './actions/authActions';
+import { logoutUser } from './actions/authActions';
+import { clearCurrentProfile } from './actions/profileActions';
 
 import store from './store';
 import Navbar from './components/layout/Navbar';
@@ -11,6 +13,7 @@ import Footer from './components/layout/Footer';
 import Landing from './components/layout/Landing';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import Dashboard from './components/dashboard/Dashboard';
 
 
 import './App.css';
@@ -20,6 +23,17 @@ if(localStorage.jwtToken){
   setAuthToken(localStorage.jwtToken);
   const decodedToken = jwt_decode(localStorage.jwtToken);
   store.dispatch(setCurrentUser(decodedToken));
+
+  // Check for expired token
+  const currentTime = Date.now() / 1000;
+  if(decodedToken.exp < currentTime) {
+    store.dispatch(logoutUser());
+
+    store.dispatch(clearCurrentProfile());
+
+    // Redirect to login
+    window.location.href = '/login';
+  }
 }
 
 // NOTICE, there is no path for Navbar or Footer, this means they are rendered to the dom in EVERY path
@@ -35,10 +49,14 @@ class App extends Component {
           <div className="App">
             <Navbar />
             <Route exact path = "/" component={Landing} />
-            <div className="container">
+
+            {/* Routes */}
+            <div className="container"> 
               <Route exact path = "/register" component = {Register} />
               <Route exact path = "/login" component = {Login} />
+              <Route exact path = "/dashboard" component = {Dashboard} />
             </div>
+
             <Footer />
           </div>
         </Router>
